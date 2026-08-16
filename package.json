@@ -1,0 +1,19 @@
+{
+  "name": "md-link-checker",
+  "version": "1.0.0",
+  "description": "CLI utility to check markdown links for validity",
+  "main": "index.js",
+  "bin": {
+    "md-link-checker": "index.js"
+  },
+  "scripts": {
+    "test": "node index.js ."
+  },
+  "keywords": [
+    "markdown",
+    "link",
+    "checker"
+  ],
+  "author": "",
+  "license": "ISC"
+}
