@@ -8,12 +8,24 @@ const TableFormatter = require('./lib/TableFormatter');
 
 const args = process.argv.slice(2);
 
-if (args.length === 0) {
-  console.error('Usage: node index.js <folder-path>');
+let folderPath = null;
+let onlyDead = false;
+
+// Parse arguments
+for (let i = 0; i < args.length; i++) {
+  if (args[i] === '--only-dead') {
+    onlyDead = true;
+  } else if (!args[i].startsWith('-')) {
+    folderPath = args[i];
+  }
+}
+
+if (!folderPath) {
+  console.error('Usage: node index.js <folder-path> [--only-dead]');
   process.exit(1);
 }
 
-const folderPath = path.resolve(args[0]);
+folderPath = path.resolve(folderPath);
 
 if (!fs.existsSync(folderPath)) {
   console.error(`Error: Folder not found: ${folderPath}`);
@@ -23,7 +35,13 @@ if (!fs.existsSync(folderPath)) {
 async function main() {
   try {
     const checker = new LinkChecker(folderPath);
-    const results = await checker.checkAllLinks();
+    let results = await checker.checkAllLinks();
+
+    // Filter to only dead links if flag is set
+    if (onlyDead) {
+      results = results.filter(r => !r.isAlive);
+    }
+
     const formatter = new TableFormatter();
     formatter.displayResults(results);
   } catch (error) {
